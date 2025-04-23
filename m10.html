@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>सरल रेखाएँ: (Straight Lines)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>सरल रेखाएँ: (Straight Lines)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+        const questions = [
+  {
+    question: "यदि रेखा की प्रवणता 1 है, तो उसका झुकाव कोण (inclination) क्या होगा?",
+    options: ["30°", "45°", "60°", "90°"],
+    correctAnswer: 1
+  },
+  {
+    question: "रेखा की प्रवणता अनंत (infinite) होने पर वह रेखा किस दिशा में होती है?",
+    options: ["क्षैतिज", "ऊर्ध्वाधर", "45°", "135°"],
+    correctAnswer: 1
+  },
+  {
+    question: "बिंदु (2,3) से होकर जाने वाली और प्रवणता 2 वाली रेखा का ढाल रूप समीकरण क्या होगा?",
+    options: ["y = 2x + 3", "y - 3 = 2(x - 2)", "y = x + 1", "y + 3 = 2(x + 2)"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि दो रेखाएँ परस्पर लंबवत हैं, तो उनके ढालों का गुणनफल होगा?",
+    options: ["1", "-1", "0", "अनंत"],
+    correctAnswer: 1
+  },
+  {
+    question: "सामान्य रूप (General Form) में रेखा का समीकरण होता है:",
+    options: ["y = mx + c", "x^2 + y^2 = r^2", "ax + by + c = 0", "y - y1 = m(x - x1)"],
+    correctAnswer: 2
+  },
+  // 5 done - adding 45 more
+  {
+    question: "रेखा y = mx + c में m का अर्थ है?",
+    options: ["विलयन", "ढाल", "प्रतिच्छेदन", "शून्य"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि रेखा x-अक्ष को a पर और y-अक्ष को b पर प्रतिच्छेद करती है, तो उसका समीकरण होगा:",
+    options: ["ax + by = ab", "x/a + y/b = 1", "x + y = a + b", "x - a = y - b"],
+    correctAnswer: 1
+  },
+  {
+    question: "दो रेखाएँ समांतर होती हैं यदि उनके ढाल:",
+    options: ["समान होते हैं", "विलोम होते हैं", "गुणनफल -1 होता है", "अज्ञात होता है"],
+    correctAnswer: 0
+  },
+  {
+    question: "रेखा का झुकाव कोण θ और प्रवणता m के बीच संबंध है:",
+    options: ["m = cos θ", "m = sin θ", "m = tan θ", "m = cot θ"],
+    correctAnswer: 2
+  },
+  {
+    question: "बिंदु (x1, y1) से होकर m प्रवणता वाली रेखा का समीकरण होता है:",
+    options: ["y - y1 = m(x - x1)", "x - x1 = m(y - y1)", "y = m + x", "x = m(y - y1)"],
+    correctAnswer: 0
+  },
+  {
+    question: "रेखा का ढाल ∞ है, तो यह रेखा कैसी होगी?",
+    options: ["क्षैतिज", "ऊर्ध्वाधर", "तिरछी", "समांतर"],
+    correctAnswer: 1
+  },
+  {
+    question: "y = mx + c में c किसका प्रतिनिधित्व करता है?",
+    options: ["x-अक्ष प्रतिच्छेदन", "y-अक्ष प्रतिच्छेदन", "ढाल", "शून्य"],
+    correctAnswer: 1
+  },
+  {
+    question: "दो बिंदुओं (x1, y1) और (x2, y2) को मिलाने वाली रेखा की प्रवणता क्या होगी?",
+    options: ["(x2 - x1)/(y2 - y1)", "(y2 - y1)/(x2 - x1)", "x1 + x2", "y1 + y2"],
+    correctAnswer: 1
+  },
+  {
+    question: "x + y = 0 रेखा किस कोण पर झुकी है?",
+    options: ["45°", "135°", "90°", "0°"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि दो रेखाएँ एक-दूसरे को समकोण पर प्रतिच्छेद करती हैं, तो उनके ढालों का गुणनफल होगा:",
+    options: ["0", "1", "-1", "अनंत"],
+    correctAnswer: 2
+  },
+  {
+    question: "रेखा का सामान्य रूप ax + by + c = 0 है, तो उसका ढाल क्या होगा?",
+    options: ["a/b", "-a/b", "b/a", "-b/a"],
+    correctAnswer: 1
+  },
+  {
+    question: "रेखा 3x + 4y - 12 = 0 का y-अक्ष पर प्रतिच्छेदन क्या है?",
+    options: ["3", "4", "12", "–3"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि रेखा y = 2x + 1 है, तो इसका x-अक्ष पर प्रतिच्छेदन होगा?",
+    options: ["(0,1)", "(1,0)", "(-0.5, 0)", "(0,2)"],
+    correctAnswer: 2
+  },
+  {
+    question: "रेखा x = 4 कैसी रेखा है?",
+    options: ["क्षैतिज", "ऊर्ध्वाधर", "तिरछी", "समांतर y-अक्ष"],
+    correctAnswer: 1
+  },
+  {
+    question: "रेखा y = 3 कैसी रेखा है?",
+    options: ["ऊर्ध्वाधर", "तिरछी", "y-अक्ष समांतर", "x-अक्ष समांतर"],
+    correctAnswer: 3
+  },
+  {
+    question: "x + 2y = 0 रेखा y-अक्ष को कहाँ प्रतिच्छेद करती है?",
+    options: ["(0,0)", "(2,0)", "(0,-2)", "(1,1)"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि दो रेखाएँ x = 2 और x = -2 हैं, तो वे कैसी हैं?",
+    options: ["समांतर", "लंबवत", "प्रतिच्छेदित", "तिरछी"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी रेखा की प्रवणता 0 होने का अर्थ है?",
+    options: ["ऊर्ध्वाधर रेखा", "क्षैतिज रेखा", "तिरछी रेखा", "झुकाव 90°"],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी रेखा का समीकरण y - y1 = m(x - x1) कहलाता है?",
+    options: ["मानक रूप", "सामान्य रूप", "बिंदु-ढाल रूप", "कटाव रूप"],
+    correctAnswer: 2
+  },
+  {
+    question: "x/a + y/b = 1 किस रूप का समीकरण है?",
+    options: ["सामान्य रूप", "कटाव रूप", "प्रवणता रूप", "आवर्त रूप"],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी रेखा की प्रवणता m = tanθ है, तो θ क्या दर्शाता है?",
+    options: ["वृत्त का कोण", "रेखा का झुकाव कोण", "प्रतिच्छेदन", "x-अक्ष"],
+    correctAnswer: 1
+  },
+  {
+    question: "x + y = 5 रेखा किस बिंदु से होकर जाती है?",
+    options: ["(5,0)", "(0,5)", "(5,5)", "सभी"],
+    correctAnswer: 3
+  },
+  {
+    question: "x - y = 0 रेखा किस कोण पर झुकी है?",
+    options: ["45°", "60°", "30°", "90°"],
+    correctAnswer: 0
+  },
+  {
+    question: "रेखा का कोण θ = 135° है, तो प्रवणता m क्या होगी?",
+    options: ["1", "-1", "√3", "-√3"],
+    correctAnswer: 1
+  },
+  // 30 questions so far, do you want me to continue with the rest 20?
+];
+questions.push(
+  {
+    question: "यदि रेखा y = -2x + 5 है, तो इसका y-अक्ष पर प्रतिच्छेदन है?",
+    options: ["-2", "5", "2", "-5"],
+    correctAnswer: 1
+  },
+  {
+    question: "रेखा 2x - y + 3 = 0 की प्रवणता क्या होगी?",
+    options: ["2", "-2", "1/2", "-1/2"],
+    correctAnswer: 0
+  },
+  {
+    question: "x = 0 रेखा कौन-सी रेखा है?",
+    options: ["y-अक्ष", "x-अक्ष", "तिरछी", "45° पर"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि रेखा दो बिंदुओं (1,2) और (3,6) से होकर जाती है, तो उसकी प्रवणता क्या है?",
+    options: ["2", "1", "3", "4"],
+    correctAnswer: 0
+  },
+  {
+    question: "रेखा x + y = 1 और x - y = 1 किस बिंदु पर प्रतिच्छेद करती हैं?",
+    options: ["(1,0)", "(0,1)", "(1,1)", "(0,0)"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि रेखा का सामान्य समीकरण ax + by + c = 0 है, तो इसका y-अक्ष प्रतिच्छेदन होगा?",
+    options: ["-a/b", "-c/b", "c/a", "-b/c"],
+    correctAnswer: 1
+  },
+  {
+    question: "x = a और y = b रेखाएँ परस्पर कैसी होती हैं?",
+    options: ["समांतर", "लंबवत", "एक ही रेखा", "तिरछी"],
+    correctAnswer: 1
+  },
+  {
+    question: "रेखा y = x + 2 और y = x - 3 कैसी हैं?",
+    options: ["लंबवत", "समांतर", "प्रतिच्छेदित", "एक ही रेखा"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि रेखा y = 0 है, तो वह किस अक्ष पर है?",
+    options: ["x-अक्ष", "y-अक्ष", "45°", "135°"],
+    correctAnswer: 0
+  },
+  {
+    question: "x = 5 रेखा की प्रवणता क्या होगी?",
+    options: ["0", "1", "अनंत", "5"],
+    correctAnswer: 2
+  },
+  {
+    question: "x + y - 4 = 0 रेखा y-अक्ष को कहाँ काटती है?",
+    options: ["(0,4)", "(4,0)", "(0,-4)", "(2,2)"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी रेखा की प्रवणता √3 है, तो उसका झुकाव कोण होगा?",
+    options: ["30°", "45°", "60°", "90°"],
+    correctAnswer: 2
+  },
+  {
+    question: "रेखा ax + by + c = 0 का x-अक्ष प्रतिच्छेदन होगा?",
+    options: ["-c/a", "-a/c", "-c/b", "c/a"],
+    correctAnswer: 0
+  },
+  {
+    question: "y = x रेखा किन बिंदुओं से गुजरती है?",
+    options: ["(1,1)", "(2,2)", "(0,0)", "सभी"],
+    correctAnswer: 3
+  },
+  {
+    question: "रेखा x – y = 0 किस बिंदु से होकर जाती है?",
+    options: ["(0,0)", "(2,2)", "(-1,-1)", "सभी"],
+    correctAnswer: 3
+  },
+  {
+    question: "x/a + y/b = 1 रेखा का y-अक्ष पर प्रतिच्छेदन है?",
+    options: ["a", "b", "(0,b)", "(0,a)"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि रेखा की प्रवणता -1 है, तो वह किस कोण पर झुकी होगी?",
+    options: ["45°", "90°", "135°", "180°"],
+    correctAnswer: 2
+  },
+  {
+    question: "y = mx + c में यदि m = 0 हो, तो रेखा कैसी होगी?",
+    options: ["ऊर्ध्वाधर", "तिरछी", "x-अक्ष समांतर", "y-अक्ष समांतर"],
+    correctAnswer: 2
+  },
+  {
+    question: "रेखा 4x - 3y + 6 = 0 की प्रवणता क्या है?",
+    options: ["4/3", "-4/3", "3/4", "-3/4"],
+    correctAnswer: 0
+  },
+  {
+    question: "y = -x + 1 रेखा x-अक्ष को कहाँ काटती है?",
+    options: ["(1,0)", "(0,1)", "(-1,0)", "(1,1)"],
+    correctAnswer: 0
+  }
+);
+
+ 
+
+
+
+
+        
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>

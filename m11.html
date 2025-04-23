@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>शंकु परिच्छेद: (Conic Sections)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>शंकु परिच्छेद: (Conic Sections)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+        const questions = [
+  {
+    question: "शंकु परिच्छेद का वह रूप जिसमें एक बिंदु से दूरी और एक रेखा से दूरी बराबर होती है, कहलाता है?",
+    options: ["वृत्त", "परवलय", "दीर्घवृत्त", "हाइपरबोला"],
+    correctAnswer: 1
+  },
+  {
+    question: "किस शंकु परिच्छेद में दो फोकस होते हैं?",
+    options: ["वृत्त", "परवलय", "दीर्घवृत्त", "कोई नहीं"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि एक शंकु की समतल द्वारा काटने से बनने वाली आकृति एक बंद वक्र हो, तो वह कौन-सी होगी?",
+    options: ["परवलय", "दीर्घवृत्त", "हाइपरबोला", "रेखा"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि उपकेंद्रता (e) = 1 हो, तो वक्र कौन सा है?",
+    options: ["वृत्त", "दीर्घवृत्त", "हाइपरबोला", "परवलय"],
+    correctAnswer: 3
+  },
+  {
+    question: "वृत्त का सामान्य समीकरण क्या होता है?",
+    options: ["x² + y² = r²", "x² - y² = 1", "x² + y² - 2gx - 2fy + c = 0", "x² + y² = 1"],
+    correctAnswer: 2
+  },
+  {
+    question: "परवलय का मानक समीकरण होता है:",
+    options: ["x² = 4ay", "x² + y² = r²", "x² - y² = 1", "x² + y² - 2gx = 0"],
+    correctAnswer: 0
+  },
+  {
+    question: "दीर्घवृत्त की उपकेंद्रता का मान होता है:",
+    options: ["1", "0", "0 < e < 1", "e > 1"],
+    correctAnswer: 2
+  },
+  {
+    question: "x² - y² = a² समीकरण किस वक्र को दर्शाता है?",
+    options: ["हाइपरबोला", "दीर्घवृत्त", "परवलय", "वृत्त"],
+    correctAnswer: 0
+  },
+  {
+    question: "परवलय का शीर्ष होता है:",
+    options: ["(0, 0)", "(a, 0)", "(0, a)", "(a, a)"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + y² = 25 किस वक्र को दर्शाता है?",
+    options: ["हाइपरबोला", "वृत्त", "दीर्घवृत्त", "रेखा"],
+    correctAnswer: 1
+  },
+  // बाकी के 40 प्रश्न भी इसी प्रारूप में नीचे दिए जा सकते हैं...
+];
+questions.push(
+  {
+    question: "वृत्त की उपकेंद्रता (e) का मान होता है:",
+    options: ["0", "1", "बढ़ता है", "0 < e < 1"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि दो निश्चित बिंदुओं से किसी बिंदु की दूरी का अंतर स्थिर हो, तो वह वक्र होता है:",
+    options: ["वृत्त", "परवलय", "हाइपरबोला", "दीर्घवृत्त"],
+    correctAnswer: 2
+  },
+  {
+    question: "परवलय का निर्देशक रेखा क्या होती है?",
+    options: ["वह रेखा जो फोकस से समान दूरी पर हो", "केंद्र रेखा", "सीधा अक्ष", "मुख्य अक्ष"],
+    correctAnswer: 0
+  },
+  {
+    question: "हाइपरबोला की उपकेंद्रता का मान होता है:",
+    options: ["0", "1", "e > 1", "0 < e < 1"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि a > b, तो दीर्घवृत्त की लंबवत धुरी की लंबाई है:",
+    options: ["2a", "2b", "2√(a² - b²)", "a + b"],
+    correctAnswer: 1
+  },
+  {
+    question: "हाइपरबोला में दो शाखाएँ होती हैं जो:",
+    options: ["मिलती हैं", "एक दूसरे को काटती हैं", "अलग-अलग होती हैं", "परवलय बनाती हैं"],
+    correctAnswer: 2
+  },
+  {
+    question: "वृत्त का केंद्र (h, k) हो और त्रिज्या r हो, तो उसका समीकरण है:",
+    options: ["(x - h)² + (y - k)² = r²", "x² + y² = r", "x + y = r", "(x + h)² + (y + k)² = r"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + y² + 2gx + 2fy + c = 0 किस वक्र का सामान्य समीकरण है?",
+    options: ["दीर्घवृत्त", "हाइपरबोला", "वृत्त", "रेखा"],
+    correctAnswer: 2
+  },
+  {
+    question: "x = 4ay परवलय का शीर्ष होता है:",
+    options: ["(0, 0)", "(a, 0)", "(0, a)", "(-a, 0)"],
+    correctAnswer: 0
+  },
+  {
+    question: "हाइपरबोला का केंद्र होता है:",
+    options: ["दोनों शाखाओं के मध्य", "फोकस पर", "निर्देशक रेखा पर", "मुख्य अक्ष पर"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि दीर्घवृत्त का समीकरण x²/9 + y²/16 = 1 हो, तो लंबवत अक्ष की लंबाई है:",
+    options: ["6", "8", "4", "10"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² = 16y समीकरण में परवलय की त्रिज्या होती है:",
+    options: ["4", "8", "16", "2"],
+    correctAnswer: 0
+  },
+  {
+    question: "शंकु परिच्छेद किस बिंदु, रेखा और एक नियतांक से संबंधित है?",
+    options: ["निर्देशक रेखा", "फोकस", "उपकेंद्रता", "सभी"],
+    correctAnswer: 3
+  },
+  {
+    question: "परवलय में उपकेंद्रता e का मान होता है:",
+    options: ["1", "0", ">1", "<1"],
+    correctAnswer: 0
+  },
+  {
+    question: "वह बिंदु जहाँ से सभी दूरी समान होती हैं वह कहलाता है:",
+    options: ["निर्देशक रेखा", "फोकस", "केंद्र", "शिखर"],
+    correctAnswer: 1
+  },
+  {
+    question: "हाइपरबोला का निर्देशक रेखा पर स्थिति होती है:",
+    options: ["फोकस से समान दूरी पर", "केंद्र से समान दूरी पर", "मुख्य अक्ष के समानांतर", "कोई नहीं"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² = 4ay का परवलय किस अक्ष के समानांतर होता है?",
+    options: ["x-अक्ष", "y-अक्ष", "मुख्य अक्ष", "माध्यिका"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² + y² - 16 = 0 किस त्रिज्या का वृत्त है?",
+    options: ["4", "8", "2", "16"],
+    correctAnswer: 0
+  },
+  {
+    question: "x²/25 + y²/9 = 1 की लंबवत अक्ष की लंबाई:",
+    options: ["10", "6", "16", "12"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि a = b हो, तो दीर्घवृत्त क्या बन जाएगा?",
+    options: ["हाइपरबोला", "वृत्त", "रेखा", "परवलय"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² = -16y परवलय की दिशा होती है:",
+    options: ["ऊपर", "नीचे", "बाएं", "दाएं"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि x² + y² - 4x + 6y + 9 = 0 हो, तो त्रिज्या है:",
+    options: ["2", "3", "4", "1"],
+    correctAnswer: 1
+  },
+  {
+    question: "हाइपरबोला की एक शाखा से दूसरी तक की न्यूनतम दूरी क्या कहलाती है?",
+    options: ["केंद्र", "फोकस", "ट्रान्सवर्स एक्सिस", "को-एक्सिस"],
+    correctAnswer: 2
+  },
+  {
+    question: "दीर्घवृत्त की उपकेंद्रता e का मान किस सीमा में होता है?",
+    options: ["e > 1", "e < 0", "0 < e < 1", "e = 1"],
+    correctAnswer: 2
+  },
+  {
+    question: "हाइपरबोला में फोकस और केंद्र के बीच दूरी:",
+    options: ["a", "b", "c", "√(a² + b²)"],
+    correctAnswer: 2
+  },
+  {
+    question: "x² = 4ay परवलय का निर्देशक रेखा का समीकरण है:",
+    options: ["y = -a", "x = a", "x = -a", "y = a"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² - y² = -1 किस वक्र को दर्शाता है?",
+    options: ["हाइपरबोला", "वृत्त", "दीर्घवृत्त", "रेखा"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + y² = 0 किस वक्र का प्रतिनिधित्व करता है?",
+    options: ["वृत्त", "एक बिंदु", "शून्य वक्र", "सीधी रेखा"],
+    correctAnswer: 1
+  },
+  {
+    question: "शंकु परिच्छेद में कौनसा वक्र खुला हुआ नहीं होता?",
+    options: ["परवलय", "हाइपरबोला", "वृत्त", "कोई नहीं"],
+    correctAnswer: 2
+  },
+  {
+    question: "x² + y² = r² में r का मान शून्य होने पर वक्र होगा:",
+    options: ["रेखा", "शून्य वक्र", "एक बिंदु", "अवास्तविक वक्र"],
+    correctAnswer: 2
+  },
+  {
+    question: "वह वक्र जो किसी शंकु के तल से समकोण पर कटता है, उसे क्या कहा जाता है?",
+    options: ["परवलय", "हाइपरबोला", "वृत्त", "दीर्घवृत्त"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² - 4y = 0 परवलय का समीकरण क्या होता है?",
+    options: ["x² = 4ay", "y² = 4ax", "x² = -4ay", "y = 4ax"],
+    correctAnswer: 0
+  },
+  {
+    question: "वृत्त के केंद्र (h, k) और त्रिज्या r होने पर, उसका समीकरण क्या होता है?",
+    options: ["(x - h)² + (y - k)² = r²", "(x + h)² + (y + k)² = r²", "(x - h)² + (y - k)² = r", "(x + h)² + (y + k)² = r"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + y² - 10x - 12y + 9 = 0 समीकरण किस वक्र का प्रतिनिधित्व करता है?",
+    options: ["वृत्त", "दीर्घवृत्त", "हाइपरबोला", "परवलय"],
+    correctAnswer: 0
+  },
+  {
+    question: "दीर्घवृत्त के मानक समीकरण का रूप क्या है?",
+    options: ["x²/a² + y²/b² = 1", "x²/a² - y²/b² = 1", "x² + y² = r²", "x² + y² - 2gx - 2fy + c = 0"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि परवलय का समीकरण y² = 4ax हो, तो इसका फोकस कहाँ स्थित होगा?",
+    options: ["(0, a)", "(a, 0)", "(0, -a)", "(-a, 0)"],
+    correctAnswer: [1]
+  },
+  {
+    question: "किस शंकु परिच्छेद का उपकेंद्रता (e) का मान हमेशा 1 होता है?",
+    options: ["वृत्त", "परवलय", "दीर्घवृत्त", "हाइपरबोला"],
+    correctAnswer: 1
+  },
+  {
+    question: "हाइपरबोला का मानक समीकरण होता है:",
+    options: ["x²/a² - y²/b² = 1", "x² + y² = r²", "x² - y² = 1", "y² = 4ax"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² - y² = 1 का समीकरण किस वक्र का है?",
+    options: ["हाइपरबोला", "वृत्त", "दीर्घवृत्त", "परवलय"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि दीर्घवृत्त का समीकरण x²/a² - y²/b² = 1 हो, तो इसका प्रमुख अक्ष क्या होता है?",
+    options: ["a", "b", "√(a² + b²)", "√(a² - b²)"],
+    correctAnswer: 2
+  }
+);
+
+ 
+
+
+
+
+        
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>

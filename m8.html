@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>द्विपद प्रमेय: (Binomial Theorem)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>द्विपद प्रमेय: (Binomial Theorem)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+        const questions = [
+  {
+    question: "द्विपद प्रमेय का सामान्य पद है:",
+    options: [
+      "nCr × a^r × b^(n−r)",
+      "nCr × a^(n−r) × b^r",
+      "nCr × a^n × b^r",
+      "nCr × a^r × b^n"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "(x + y)^n में पदों की कुल संख्या होती है:",
+    options: [
+      "n",
+      "n + 1",
+      "n − 1",
+      "2n"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "(1 + x)^5 में x^3 का गुणांक क्या होगा?",
+    options: [
+      "10",
+      "5",
+      "15",
+      "20"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि (1 + x)^n में 5वाँ पद x^4 है, तो n का मान क्या होगा?",
+    options: [
+      "4",
+      "5",
+      "8",
+      "7"
+    ],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि द्विपद विस्तार में मध्य पद की संख्या विषम है तो n का मान होगा:",
+    options: [
+      "सम",
+      "विषम",
+      "0",
+      "1"
+    ],
+    correctAnswer: 1
+  },
+  // ... आगे के 45 प्रश्न इसी तरह ...
+  {
+    question: "(x + y)^5 में x^3 का गुणांक है:",
+    options: ["10", "20", "15", "5"],
+    correctAnswer: 2
+  },
+  {
+    question: "nCr में यदि r = 0 या r = n हो तो nCr का मान होगा:",
+    options: ["0", "1", "n", "n+1"],
+    correctAnswer: 1
+  },
+  {
+    question: "(1 + x)^4 में x^2 का गुणांक होगा:",
+    options: ["4", "6", "12", "8"],
+    correctAnswer: 1
+  },
+  {
+    question: "द्विपद प्रमेय में सामान्य पद होता है:",
+    options: [
+      "nCr × a^r × b^(n−r)",
+      "nCr × a^(n−r) × b^r",
+      "nCr × a^n × b^r",
+      "nCr × a^r × b^n"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "(a + b)^0 का मान है:",
+    options: ["a", "b", "1", "0"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि nCr = nCk, तो r = ?",
+    options: ["k", "n", "n−k", "k−n"],
+    correctAnswer: 2
+  },
+  {
+    question: "द्विपद गुणांक nCr अधिकतम होता है जब r होता है:",
+    options: ["0", "1", "n", "n/2"],
+    correctAnswer: 3
+  },
+  {
+    question: "(x + y)^6 में x^4 y^2 का गुणांक है:",
+    options: ["20", "15", "30", "10"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि (1 + x)^n का 5वाँ पद x^4 है, तो n का मान है:",
+    options: ["4", "5", "6", "7"],
+    correctAnswer: 3
+  },
+  {
+    question: "nC1 का मान होता है:",
+    options: ["0", "1", "n", "n-1"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि n = 6, तो nC2 का मान है:",
+    options: ["15", "20", "10", "12"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि (1 + x)^n में दो पदों का अनुपात 5:2 है, तो वे कौन से पद हो सकते हैं?",
+    options: [
+      "पाँचवाँ और दूसरा",
+      "छठा और तीसरा",
+      "दूसरा और पहला",
+      "कोई नहीं"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि (a + b)^6 में पाँचवाँ पद ज्ञात करना हो, तो वह होगा:",
+    options: [
+      "6C4 × a^2 × b^4",
+      "6C3 × a^3 × b^3",
+      "6C4 × a^3 × b^2",
+      "6C3 × a^2 × b^4"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "(2 + 3)^5 का मान है:",
+    options: ["3125", "16807", "7776", "none of these"],
+    correctAnswer: 0
+  },
+  {
+    question: "(x + 1)^3 का विस्तार है:",
+    options: [
+      "x^3 + 3x^2 + 3x + 1",
+      "x^3 + 2x^2 + x + 1",
+      "x^3 + 3x + 1",
+      "x^3 + 3x^2 + x + 1"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "(a + b)^2 का विस्तार है:",
+    options: [
+      "a^2 + b^2 + ab",
+      "a^2 + 2ab + b^2",
+      "a^2 - 2ab + b^2",
+      "a^2 + ab + b^2"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "द्विपद प्रमेय में n का मान ऋणात्मक हो तो विस्तार होता है:",
+    options: [
+      "अनंत पदों में",
+      "n पदों में",
+      "2n पदों में",
+      "संभव नहीं"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि (x + y)^n का मध्य पद एकमात्र होता है, तो n का मान होता है:",
+    options: ["सम", "विषम", "शून्य", "दोनों"],
+    correctAnswer: 0
+  },
+  {
+    question: "(a + b)^4 में तीसरे पद का गुणांक है:",
+    options: ["4", "6", "12", "24"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि n = 10, तो nC4 + nC5 का मान होगा:",
+    options: ["nC5", "nC6", "nC4", "nC3"],
+    correctAnswer: 1
+  },
+  {
+    question: "द्विपद प्रमेय का आविष्कारक कौन है?",
+    options: [
+      "न्यूटन",
+      "पास्कल",
+      "गाउस",
+      "यूक्लिड"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि n = 5, तो द्विपद गुणांक nC3 का मान है:",
+    options: ["10", "5", "15", "20"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि a = 1 और b = 2 हो तो (a + b)^3 = ?",
+    options: ["27", "8", "9", "64"],
+    correctAnswer: 0
+  },
+  {
+    question: "Pascal's triangle में तीसरी पंक्ति के पद हैं:",
+    options: ["1 2 1", "1 3 3 1", "1 1", "1 4 6 4 1"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि (x + 1)^n में x^2 का गुणांक 45 है, तो n का मान होगा:",
+    options: ["9", "10", "8", "6"],
+    correctAnswer: 0
+  },
+  {
+    question: "x^n का विस्तार में अंतिम पद होगा:",
+    options: ["a^n", "b^n", "a^0 b^n", "a^n b^0"],
+    correctAnswer: 2
+  },
+  {
+    question: "(a - b)^3 का विस्तार है:",
+    options: [
+      "a^3 - 3a^2b + 3ab^2 - b^3",
+      "a^3 + 3a^2b + 3ab^2 + b^3",
+      "a^3 - b^3",
+      "a^3 + b^3"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि n = 7, तो nC2 का मान क्या होगा?",
+    options: ["21", "14", "35", "28"],
+    correctAnswer: 0
+  },
+  {
+    question: "nC0 + nC1 + ... + nCn = ?",
+    options: ["2^n", "n", "n^2", "2n"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि (1 + x)^6 में x^3 का गुणांक 20 है, तो यह कौन-सा पद है?",
+    options: ["चौथा", "पाँचवाँ", "छठा", "तीसरा"],
+    correctAnswer: 1
+  },
+  {
+    question: "द्विपद प्रमेय का उपयोग मुख्यतः किसके लिए होता है?",
+    options: [
+      "Integration",
+      "Expansion",
+      "Matrix",
+      "Differentiation"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि n = 5, तो 5C2 = ?",
+    options: ["10", "5", "20", "15"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि (x + a)^n में x^2 का गुणांक अधिकतम हो, तो r = ?",
+    options: ["n/2", "2", "1", "3"],
+    correctAnswer: 1
+  },
+  {
+    question: "nCn का मान होता है:",
+    options: ["1", "n", "0", "n-1"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि n = 10, तो nC5 = ?",
+    options: ["252", "210", "120", "100"],
+    correctAnswer: 0
+  },
+  {
+    question: "द्विपद प्रमेय में पदों की संख्या n + 1 होती है, यदि:",
+    options: [
+      "n पूर्णांक है",
+      "n ऋणात्मक है",
+      "n = 0 है",
+      "n अज्ञात है"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "द्विपद गुणांक nCr का मान हमेशा होता है:",
+    options: [
+      "धनात्मक पूर्णांक",
+      "ऋणात्मक",
+      "शून्य",
+      "अनंत"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि (1 + x)^n में x^k का गुणांक अधिकतम हो, तो k = ?",
+    options: ["n/2", "n", "0", "n-1"],
+    correctAnswer: 0
+  },
+  {
+    question: "nCr = nC(n−r) का क्या अर्थ है?",
+    options: [
+      "गुणांक बराबर होते हैं",
+      "गुणांक शून्य होते हैं",
+      "गुणांक गुणा होते हैं",
+      "कुछ नहीं"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि (a + b)^n में केवल एक पद हो, तो n का मान है:",
+    options: ["0", "1", "2", "3"],
+    correctAnswer: 0
+  },
+  {
+    question: "(x - y)^2 का विस्तार है:",
+    options: [
+      "x^2 + 2xy + y^2",
+      "x^2 - 2xy + y^2",
+      "x^2 + y^2",
+      "x^2 - y^2"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि (1 + x)^6 का मध्य पद पूछा जाए, तो वह होगा:",
+    options: ["चौथा", "तीसरा", "पाँचवाँ", "छठा"],
+    correctAnswer: 0
+  },
+  {
+    question: "द्विपद प्रमेय में r = 0 होने पर nCr का मान:",
+    options: ["n", "1", "0", "n-1"],
+    correctAnswer: 1
+  },
+  {
+    question: "(1 + x)^3 का दूसरा पद क्या होगा?",
+    options: [
+      "3x^2",
+      "3x",
+      "x",
+      "x^2"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि (a + b)^n में अंतिम पद चाहिए, तो वह होगा:",
+    options: [
+      "a^n",
+      "nCn × a^0 × b^n",
+      "nC0 × a^n × b^0",
+      "nC1 × a^n × b"
+    ],
+    correctAnswer: 1
+  }
+];
+
+
+ 
+
+
+
+
+       
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>

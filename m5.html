@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>सम्मिश्र संख्याएँ और द्विघातीय समीकरण: (Complex Numbers and Quadratic Equations)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>सम्मिश्र संख्याएँ और द्विघातीय समीकरण: (Complex Numbers and Quadratic Equations)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+        
+ 
+
+
+const questions = [
+  {
+    question: "सम्मिश्र संख्याओं का रूप क्या होता है?",
+    options: ["a + bi", "a - bi", "a + b", "a - b"],
+    correctAnswer: 0
+  },
+  {
+    question: "i का मान क्या है?",
+    options: ["1", "-1", "√-1", "0"],
+    correctAnswer: 2
+  },
+  {
+    question: "अगर z = 3 + 4i, तो z का वास्तविक भाग क्या है?",
+    options: ["3", "4", "7", "0"],
+    correctAnswer: 0
+  },
+  {
+    question: "i^2 का मान क्या है?",
+    options: ["1", "-1", "0", "√-1"],
+    correctAnswer: 1
+  },
+  {
+    question: "सम्मिश्र संख्याओं का गुणन क्या होता है?",
+    options: ["(a + bi)(c + di)", "(a + bi)(a - bi)", "(a + bi)(a + bi)", "(a - bi)(c - di)"],
+    correctAnswer: 1
+  },
+  {
+    question: "समीकरण x² + 1 = 0 का हल क्या होगा?",
+    options: ["x = ±1", "x = ±i", "x = 0", "x = ±√-1"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² - 1 = 0 का हल क्या होगा?",
+    options: ["x = ±1", "x = ±i", "x = 0", "x = ±√-1"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी द्विघातीय समीकरण ax² + bx + c = 0 का सामान्य रूप क्या है?",
+    options: ["ax² + bx + c = 0", "x² + bx + c = 0", "ax² + b + c = 0", "bx² + ax + c = 0"],
+    correctAnswer: 0
+  },
+  {
+    question: "समीकरण x² - 4x + 3 = 0 का हल क्या होगा?",
+    options: ["x = 1, 3", "x = -1, -3", "x = 2, 3", "x = -2, 3"],
+    correctAnswer: 0
+  },
+  {
+    question: "द्विघातीय समीकरण के लिए पूर्णांक विधि का क्या उपयोग होता है?",
+    options: ["गुणा करना", "विभाजन करना", "बड़ी संख्या से घटाना", "दोनों पक्षों का जोड़ना"],
+    correctAnswer: 2
+  },
+  {
+    question: "x² - 5x + 6 = 0 का हल क्या होगा?",
+    options: ["x = 1, 6", "x = 2, 3", "x = -2, -3", "x = 0, 6"],
+    correctAnswer: 1
+  },
+  {
+    question: "समीकरण x² - 2x - 8 = 0 का हल क्या होगा?",
+    options: ["x = 2, -4", "x = -2, 4", "x = 1, -8", "x = 2, 4"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² + 3x + 2 = 0 का हल क्या होगा?",
+    options: ["x = -1, -2", "x = 1, 2", "x = -3, -4", "x = -2, 1"],
+    correctAnswer: 0
+  },
+  {
+    question: "क्या x² + 1 = 0 का कोई वास्तविक हल है?",
+    options: ["हां", "नहीं", "शायद", "यह अव्यक्त है"],
+    correctAnswer: 1
+  },
+  {
+    question: "समीकरण x² + 6x + 9 = 0 को किस रूप में लिखा जा सकता है?",
+    options: ["(x + 3)² = 0", "(x - 3)² = 0", "(x + 2)² = 0", "(x - 2)² = 0"],
+    correctAnswer: 0
+  },
+  {
+    question: "i का गुणा i^3 से क्या होगा?",
+    options: ["1", "-1", "i", "-i"],
+    correctAnswer: 3
+  },
+  {
+    question: "x² + 2x + 1 = 0 का हल क्या होगा?",
+    options: ["x = -1, 1", "x = -1", "x = 1", "x = -2"],
+    correctAnswer: 1
+  },
+  {
+    question: "सम्पूर्णांक विधि का क्या उद्देश्य है?",
+    options: ["समीकरण को हल करना", "समीकरण का द्रव्य रूप में रूपांतरण", "निश्चित मान ढूँढना", "द्विघातीय समीकरण का पूर्णांक निकालना"],
+    correctAnswer: 0
+  },
+  {
+    question: "i^4 का मान क्या होगा?",
+    options: ["i", "-i", "1", "-1"],
+    correctAnswer: 2
+  },
+  {
+    question: "x² + 1 = 0 का हल क्या होगा?",
+    options: ["x = 1", "x = -i", "x = i", "x = 0"],
+    correctAnswer: 2
+  },
+  {
+    question: "2x² - 3x - 5 = 0 के हल क्या होंगे?",
+    options: ["x = 5, -2", "x = 2, -5", "x = 1, -3", "x = -1, 3"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² + 6x + 9 = 0 का हल क्या होगा?",
+    options: ["x = -3", "x = 3", "x = 1", "x = -2"],
+    correctAnswer: 0
+  },
+  {
+    question: "i का मान क्या है?",
+    options: ["1", "-1", "√-1", "0"],
+    correctAnswer: 2
+  },
+  {
+    question: "x² - 4 = 0 का हल क्या होगा?",
+    options: ["x = 2, -2", "x = 4, -4", "x = 1, -1", "x = 0, 4"],
+    correctAnswer: 0
+  },
+  {
+    question: "समीकरण x² + 2x + 5 = 0 का हल क्या होगा?",
+    options: ["x = -1 ± 2i", "x = ±i", "x = -1 ± i", "x = ±2"],
+    correctAnswer: 2
+  },
+  {
+    question: "x² - 1 = 0 का हल क्या होगा?",
+    options: ["x = ±1", "x = ±2", "x = ±i", "x = 1"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² - 6x + 9 = 0 का हल क्या होगा?",
+    options: ["x = 3", "x = -3", "x = 1", "x = -1"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + 2x + 3 = 0 का हल क्या होगा?",
+    options: ["x = -1 ± i", "x = 1 ± i", "x = ±i", "x = -2 ± i"],
+    correctAnswer: 0
+  },
+  {
+    question: "i³ का मान क्या होता है?",
+    options: ["-i", "i", "1", "-1"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + 4 = 0 का हल क्या होगा?",
+    options: ["x = ±2i", "x = ±i", "x = ±4", "x = ±2"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + 6x + 9 = 0 को किस रूप में लिखा जा सकता है?",
+    options: ["(x + 3)² = 0", "(x - 3)² = 0", "(x + 2)² = 0", "(x - 2)² = 0"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² - 3x - 4 = 0 का हल क्या होगा?",
+    options: ["x = 1, -4", "x = -1, 4", "x = 4, -1", "x = 3, -1"],
+    correctAnswer: 2
+  },
+  {
+    question: "i⁴ का मान क्या होगा?",
+    options: ["1", "-1", "i", "-i"],
+    correctAnswer: 0
+  },
+  {
+    question: "द्विघातीय समीकरण x² + 6x + 5 = 0 का हल क्या होगा?",
+    options: ["x = -1, -5", "x = -2, -3", "x = 1, -5", "x = -1, 5"],
+    correctAnswer: 1
+  },
+  {
+    question: "समीकरण x² - 2x + 2 = 0 का हल क्या होगा?",
+    options: ["x = 1 ± i", "x = 0 ± 2i", "x = -1 ± i", "x = -1"],
+    correctAnswer: 0
+  },
+  {
+    question: "क्या x² + 1 = 0 का कोई वास्तविक हल है?",
+    options: ["हां", "नहीं", "शायद", "यह परस्थितियों पर निर्भर है"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² + 2x + 3 = 0 का हल क्या होगा?",
+    options: ["x = -1 ± i", "x = 1 ± i", "x = ±i", "x = -2 ± i"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + 6x + 9 = 0 का हल क्या होगा?",
+    options: ["x = 3", "x = -3", "x = 1", "x = -1"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी द्विघातीय समीकरण ax² + bx + c = 0 के लिए डेल्टा (Δ) की मान्यता क्या है?",
+    options: ["Δ = b² - 4ac", "Δ = b² + 4ac", "Δ = 2b - ac", "Δ = a² - bc"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² - 6x + 8 = 0 का हल क्या होगा?",
+    options: ["x = 2, -4", "x = 4, -2", "x = -2, -4", "x = -4, 2"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² + 5x + 6 = 0 का हल क्या होगा?",
+    options: ["x = -1, -6", "x = 1, -6", "x = -2, -3", "x = -1, 3"],
+    correctAnswer: 2
+  },
+  {
+    question: "x² - 2x - 3 = 0 का हल क्या होगा?",
+    options: ["x = 1, -3", "x = -1, 3", "x = -1, -3", "x = 2, -3"],
+    correctAnswer: 1
+  },
+  {
+    question: "i^5 का मान क्या होगा?",
+    options: ["-i", "i", "1", "-1"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² - 3x + 2 = 0 का हल क्या होगा?",
+    options: ["x = 1, 2", "x = 3, -2", "x = -1, -2", "x = -2, 1"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + 4x + 4 = 0 का हल क्या होगा?",
+    options: ["x = -2", "x = 2", "x = -4", "x = 4"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + 3x - 4 = 0 का हल क्या होगा?",
+    options: ["x = 1, -4", "x = 4, -1", "x = -4, 1", "x = 1, 3"],
+    correctAnswer: 1
+  },
+  {
+    question: "x² + 7x + 12 = 0 का हल क्या होगा?",
+    options: ["x = -3, -4", "x = 3, 4", "x = -6, -2", "x = -1, 12"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² - 5x + 6 = 0 का हल क्या होगा?",
+    options: ["x = -2, -3", "x = 1, 6", "x = -1, 3", "x = 2, 3"],
+    correctAnswer: 0
+  },
+  {
+    question: "x² + 2x - 3 = 0 का हल क्या होगा?",
+    options: ["x = 3, -1", "x = -3, 1", "x = -1, -3", "x = 1, -3"],
+    correctAnswer: 0
+  },
+  {
+    question: "क्या x² + 4x + 5 = 0 का कोई वास्तविक हल है?",
+    options: ["हां", "नहीं", "शायद", "यह परस्थितियों पर निर्भर है"],
+    correctAnswer: 1
+  },
+];
+
+
+
+        
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>

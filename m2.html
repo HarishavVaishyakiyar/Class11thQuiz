@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>संबंध एवं फलन: (Relations and Functions)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>संबंध एवं फलन: (Relations and Functions)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+        const questions = [
+  {
+    question: "यदि A = {1, 2, 3} और B = {4, 5} हो, तो A × B में कुल तत्वों की संख्या क्या होगी?",
+    options: ["3", "5", "6", "8"],
+    correctAnswer: 2
+  },
+  {
+    question: "एक फलन क्या होता है?",
+    options: [
+      "A × B का कोई भी उपसमुच्चय",
+      "ऐसा संबंध जिसमें एक तत्व A का दो या अधिक तत्वों से संबंध हो",
+      "ऐसा संबंध जिसमें A के प्रत्येक तत्व का B के केवल एक तत्व से संबंध हो",
+      "कोई भी यादृच्छिक संबंध"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि एक संबंध R, सममित और प्रतिचर हो, तो वह अवकलनीय होगा?",
+    options: ["हाँ", "नहीं", "केवल यदि वह पारगामी हो", "सदैव"],
+    correctAnswer: 2
+  },
+  {
+    question: "सममित संबंध का क्या अर्थ है?",
+    options: [
+      "aRb और bRa दोनों सत्य हों",
+      "aRb और bRc हों तो aRc हो",
+      "aRa हो",
+      "aRb और bRc न हो"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f: R → R एक फलन है और f(x) = x² है, तो f(–2) का मान क्या होगा?",
+    options: ["–2", "2", "4", "–4"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि f(x) = 3x + 1 और g(x) = x – 2, तो f(g(x)) क्या होगा?",
+    options: ["3x + 1", "3x – 5", "3x – 2", "3x + 4"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि संबंध R परिलक्षित, सममित और पारगामी हो, तो उसे क्या कहते हैं?",
+    options: ["सार्वत्रिक संबंध", "सारणी संबंध", "समानता संबंध", "गुणन फलन"],
+    correctAnswer: 2
+  },
+  {
+    question: "A × A पर परिलक्षित संबंध कौन सा होगा?",
+    options: [
+      "{(a,a) | a ∈ A}",
+      "{(a,b) | a ≠ b}",
+      "A × A",
+      "रिक्त संबंध"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि एक फलन एक-एक और सर्वांग हो, तो उसे क्या कहते हैं?",
+    options: ["परिवर्ती", "एक-एक फलन", "सर्वांग फलन", "आव्यूह फलन"],
+    correctAnswer: 3
+  },
+  {
+    question: "f(x) = 1/x, x ≠ 0 एक-एक फलन है?",
+    options: ["हाँ", "नहीं", "केवल x > 0 पर", "केवल x < 0 पर"],
+    correctAnswer: 0
+  },
+
+  // 40 more questions
+  // You can ask me to continue and provide remaining questions in this format
+];
+questions.push(
+  {
+    question: "एक फलन f: A → B तब एक-एक होता है जब:",
+    options: [
+      "A का हर तत्व B के केवल एक तत्व से जुड़ा हो",
+      "B का हर तत्व A के केवल एक तत्व से जुड़ा हो",
+      "कोई दो भिन्न तत्व A के एक ही B तत्व से न जुड़ें",
+      "f(a1) = f(a2) का मतलब a1 = a2 हो",
+    ],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि एक फलन का हर तत्व बी में कवर होता है, तो फलन को कहते हैं:",
+    options: ["एक-एक", "सर्वांग", "समानता", "परिलक्षित"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि एक फलन एक-एक और सर्वांग दोनों हो तो उसे कहते हैं:",
+    options: ["पर्याप्त फलन", "समांतर फलन", "एक-एक फलन", "समानता फलन"],
+    correctAnswer: 3
+  },
+  {
+    question: "एक सममित और पारगामी संबंध परिलक्षित हो सकता है यदि:",
+    options: [
+      "हर (a, b) के लिए (b, a) है और (a, a) भी है",
+      "हर a के लिए (a, a) है",
+      "केवल (a, b) और (b, a) है",
+      "केवल (a, a) है",
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि R एक समानता संबंध है, तो:",
+    options: [
+      "R परिलक्षित है",
+      "R सममित है",
+      "R पारगामी है",
+      "उपरोक्त सभी",
+    ],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि A में n तत्त्व हैं और B में m, तो A × B में कुल तत्त्व होंगे:",
+    options: ["n + m", "n × m", "n – m", "n ÷ m"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि f(x) = x² और g(x) = x + 1, तो g(f(x)) क्या होगा?",
+    options: ["x² + 1", "x + 1", "(x + 1)²", "x² – 1"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f और g दो फलन हैं, तो f(g(x)) को कहते हैं:",
+    options: ["परिवर्तन फलन", "जोड़ फलन", "संयोजन फलन", "विलोपन फलन"],
+    correctAnswer: 2
+  },
+  {
+    question: "रिक्त संबंध क्या होता है?",
+    options: [
+      "जिसमें कोई भी युग्म नहीं हो",
+      "जो सभी तत्त्वों को जोड़े",
+      "केवल सममित युग्म हों",
+      "केवल विषम युग्म हों",
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f: A → B और g: B → C दोनों एक-एक हों, तो g∘f:",
+    options: ["एक-एक होगा", "सर्वांग होगा", "समानता होगा", "नहीं कहा जा सकता"],
+    correctAnswer: 0
+  },
+  {
+    question: "R एक संबंध है यदि:",
+    options: [
+      "R ⊆ A × B",
+      "R ⊂ A × B",
+      "R = A × B",
+      "R ∈ A × B",
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "फलनों का विलोम केवल तभी होता है जब फलन:",
+    options: [
+      "एक-एक हो",
+      "सर्वांग हो",
+      "एक-एक और सर्वांग हो",
+      "नियतांक हो",
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि f: A → B और B में कोई तत्व ऐसा है जो किसी भी A से संबंधित नहीं है, तो f:",
+    options: ["एक-एक है", "सर्वांग नहीं है", "समानता है", "रिक्त है"],
+    correctAnswer: 1
+  },
+  {
+    question: "A × A पर संबंध R = {(a, b): a = b} क्या है?",
+    options: ["सममित", "पारगामी", "परिलक्षित", "सभी"],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि संबंध R पारगामी नहीं है तो:",
+    options: [
+      "aRb और bRc होने पर aRc न हो सकता",
+      "aRb और bRc न हों",
+      "aRc सदा होगा",
+      "कोई संबंध नहीं है",
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "एक फलन का ग्राफ क्या दर्शाता है?",
+    options: ["सीधा रेखा", "एक से अधिक मान", "हर x का एक y", "कोई भी वक्र"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि f(x) = 1/(x-1), तो x का कौन-सा मान प्रतिबंधित है?",
+    options: ["0", "1", "-1", "2"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि संबंध R: A → A परिलक्षित, सममित और पारगामी हो, तो:",
+    options: ["R समानता संबंध है", "R एक फलन है", "R सर्वांग है", "R विलोम है"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f: R → R, f(x) = 2x + 1, तो इसका विलोम क्या होगा?",
+    options: [
+      "(x - 1)/2",
+      "2x - 1",
+      "1/2x + 1",
+      "1/(2x + 1)",
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "किस फलन का विलोम नहीं होता?",
+    options: ["समानता फलन", "सर्वांग फलन", "एक-एक फलन", "नियत फलन"],
+    correctAnswer: 3
+  },
+
+  // अंतिम 20 प्रश्न
+  {
+    question: "फलन की परिभाषा क्या है?",
+    options: [
+      "संबंध जो A के हर तत्व को B के एक तत्व से जोड़ता है",
+      "संबंध जो A के कुछ तत्वों को B से जोड़ता है",
+      "B से A का संबंध",
+      "कोई भी जोड़ी",
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "f(x) = |x| फलन है:",
+    options: ["एक-एक", "सर्वांग", "नियत", "न एक-एक न सर्वांग"],
+    correctAnswer: 3
+  },
+  {
+    question: "f(x) = x³ एक फलन है:",
+    options: ["एक-एक", "सर्वांग", "दोनों", "कोई नहीं"],
+    correctAnswer: 2
+  },
+  {
+    question: "R = {(a, b): a – b = 0} संबंध है:",
+    options: ["सममित", "पारगामी", "परिलक्षित", "सभी"],
+    correctAnswer: 3
+  },
+  {
+    question: "समानता संबंध की विशेषता क्या है?",
+    options: ["परिलक्षित", "सममित", "पारगामी", "उपरोक्त सभी"],
+    correctAnswer: 3
+  },
+  {
+    question: "A × A में कुल युग्म कितने होंगे यदि A = {1, 2, 3}?",
+    options: ["6", "3", "9", "12"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि f और g दोनों समानता हों, तो g∘f भी:",
+    options: ["एक-एक", "सर्वांग", "समानता", "कोई नहीं"],
+    correctAnswer: 2
+  },
+  {
+    question: "परिलक्षित संबंध का उदाहरण:",
+    options: [
+      "{(1,1), (2,2), (3,3)}",
+      "{(1,2), (2,1)}",
+      "{(1,3), (3,2)}",
+      "{(2,3)}",
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "फलन का व्युत्क्रम किस स्थिति में परिभाषित होता है?",
+    options: [
+      "जब वह एक-एक हो",
+      "जब वह सर्वांग हो",
+      "जब वह दोनों हो",
+      "कभी नहीं",
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि f(x) = √x, तो इसका परिभाषा क्षेत्र क्या होगा?",
+    options: ["R", "x ≥ 0", "x > 0", "x ≤ 0"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि f(x) = x² और x ∈ R, तो f(x) का मान हमेशा:",
+    options: ["धनात्मक या शून्य", "ऋणात्मक", "कोई भी मान", "केवल धनात्मक"],
+    correctAnswer: 0
+  },
+  {
+    question: "R = {(a, b): a mod 2 = b mod 2} संबंध परिलक्षित है?",
+    options: ["हाँ", "नहीं", "कभी-कभी", "निश्चित नहीं"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f(x) = sin(x), तो f का परिभाषा क्षेत्र है:",
+    options: ["R", "[0, π]", "[-1,1]", "(0, ∞)"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f(x) = x + 5 और g(x) = x², तो f(g(x)) का मान होगा:",
+    options: ["x² + 5", "x + 5", "(x + 5)²", "x² – 5"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f(x) = ln(x), तो इसका परिभाषा क्षेत्र है:",
+    options: ["x > 0", "x ≥ 0", "x < 0", "सभी वास्तविक संख्याएँ"],
+    correctAnswer: 0
+  },
+  {
+    question: "एक समुच्चय पर संबंध अधिकतम कितने हो सकते हैं यदि उसमें n तत्त्व हैं?",
+    options: ["n", "n²", "2^n", "2^(n²)"],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि A = {1, 2} और B = {3, 4}, तो कितने एकल फलन A → B परिभाषित हो सकते हैं?",
+    options: ["4", "2", "8", "16"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि एक फलन f का विलोम भी एक फलन है, तो f होना चाहिए:",
+    options: ["केवल एक-एक", "केवल सर्वांग", "एक-एक और सर्वांग", "कोई नहीं"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि f(x) = tan(x), तो परिभाषा क्षेत्र क्या होगा?",
+    options: [
+      "R – {(2n+1)π/2}",
+      "R – {nπ}",
+      "सभी वास्तविक संख्याएँ",
+      "x ≥ 0"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि संबंध R, A × A पर परिभाषित है और (1, 2) ∈ R तथा (2, 3) ∈ R, तो पारगामी होने के लिए:",
+    options: ["(3, 1) ∈ R", "(1, 3) ∈ R", "(2, 1) ∈ R", "(1, 2) ∈ R"],
+    correctAnswer: 1
+  }
+);
+   let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>

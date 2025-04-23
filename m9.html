@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>अनुक्रम तथा श्रेणी: (Sequences and Series)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>अनुक्रम तथा श्रेणी: (Sequences and Series)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+        const questions = [
+  {
+    question: "यदि Sn = 2n + 3n² हो, तो S1 का मान क्या होगा?",
+    options: ["5", "6", "8", "10"],
+    correctAnswer: 3
+  },
+  {
+    question: "a = 5 और d = -2 हो, तो तीसरा पद क्या होगा?",
+    options: ["1", "3", "5", "7"],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी जी.पी. में a = 81, r = 1/3 है, तो चौथा पद क्या होगा?",
+    options: ["3", "9", "27", "1"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि किसी श्रेणी के पहले n पदों का योग Sn = n² है, तो तीसरा पद क्या होगा?",
+    options: ["5", "4", "3", "6"],
+    correctAnswer: 2
+  },
+  // ...और भी 40 प्रश्न नीचे दिए जा रहे हैं:
+  {
+    question: "यदि an = 2n - 1 हो, तो a6 का मान क्या होगा?",
+    options: ["11", "10", "12", "13"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि Sn = n(n+1)/2 हो, तो S4 का मान क्या होगा?",
+    options: ["8", "10", "15", "20"],
+    correctAnswer: 2
+  },
+  {
+    question: "किसी जी.पी. के दो पद 4 और 32 हैं, तो मध्य पद क्या होगा?",
+    options: ["8", "12", "16", "20"],
+    correctAnswer: 2
+  },
+  {
+    question: "1, 4, 9, 16, ... अनुक्रम किस प्रकार का है?",
+    options: ["AP", "GP", "Quadratic", "Harmonic"],
+    correctAnswer: 2
+  },
+  {
+    question: "किसी AP का सातवाँ पद 20 है और d = 3 है, तो पहला पद क्या है?",
+    options: ["2", "4", "6", "8"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि किसी श्रेणी का प्रत्येक पद अपने पूर्ववर्ती से 2 गुना है, तो यह है?",
+    options: ["AP", "GP", "HP", "None"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि जी.पी. में पहला पद 1 और सामान्य अनुपात -1 है, तो श्रेणी कैसी होगी?",
+    options: ["स्थिर", "परिवर्ती", "पर्यायात्मक", "विलयमान"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि an = n² + n हो, तो a3 का मान क्या होगा?",
+    options: ["12", "10", "8", "6"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी जी.पी. के तीन पद 3, 6, 12 हैं। सामान्य अनुपात क्या है?",
+    options: ["2", "3", "1", "4"],
+    correctAnswer: 0
+  },
+  {
+    question: "10, 20, 40, 80, ... का दसवाँ पद क्या होगा?",
+    options: ["5120", "10240", "51200", "20480"],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी AP के पहले 5 पदों का योग 40 है और d = 2 है, तो a क्या है?",
+    options: ["4", "5", "6", "7"],
+    correctAnswer: 1
+  },
+  {
+    question: "AP में यदि a = 7, d = 3, तो सातवाँ पद क्या होगा?",
+    options: ["25", "27", "29", "31"],
+    correctAnswer: 2
+  },
+  {
+    question: "Sn = 5n - 2n², तो S2 का मान क्या होगा?",
+    options: ["4", "6", "8", "10"],
+    correctAnswer: 0
+  },
+  {
+    question: "2, 4, 8, 16, 32,... इस जी.पी. में r क्या है?",
+    options: ["1", "2", "3", "4"],
+    correctAnswer: 1
+  },
+  {
+    question: "1, 3, 6, 10, 15,... इस अनुक्रम को क्या कहते हैं?",
+    options: ["AP", "Triangular numbers", "GP", "Fibonacci"],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी श्रेणी में a = 10, d = -1.5 है, तो तीसरा पद क्या होगा?",
+    options: ["7", "7.5", "6", "8.5"],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी जी.पी. के 4 पदों का गुणनफल 256 है और पहला पद 2 है, तो r क्या हो सकता है?",
+    options: ["2", "4", "3", "5"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी AP में चौथा पद 12 और छठा पद 20 है, तो d क्या है?",
+    options: ["2", "3", "4", "5"],
+    correctAnswer: 2
+  },
+  {
+    question: "किसी श्रेणी के पहले n पदों का योग Sn = n³ है, तो तीसरा पद a3 क्या होगा?",
+    options: ["9", "19", "27", "18"],
+    correctAnswer: 2
+  },
+  {
+    question: "AP का nवाँ पद an = a + (n-1)d होता है, इसमें a को क्या कहते हैं?",
+    options: ["मध्यम पद", "अंतिम पद", "प्रथम पद", "कोई नहीं"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि GP का a = 2 और r = -2 है, तो तीसरा पद क्या होगा?",
+    options: ["8", "-8", "4", "-4"],
+    correctAnswer: 0
+  },
+  {
+    question: "1 + 1/2 + 1/4 + 1/8 + ... अनंत तक का योग क्या है?",
+    options: ["1", "2", "3", "4"],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी जी.पी. का योग तब मौजूद होता है जब |r| क्या हो?",
+    options: ["> 1", "< 1", "= 1", "कोई नहीं"],
+    correctAnswer: 1
+  },
+  {
+    question: "GP का अनंत योग S = a / (1 - r) होता है, यदि |r| < ?",
+    options: ["2", "1", "0", "3"],
+    correctAnswer: 1
+  },
+  {
+    question: "Fibonacci अनुक्रम का तीसरा पद क्या है?",
+    options: ["2", "3", "1", "4"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि AP में पाँचवाँ पद 0 और d = 2 है, तो पहला पद क्या होगा?",
+    options: ["-8", "-6", "-10", "-2"],
+    correctAnswer: 1
+  }
+];
+questions.push(
+  {
+    question: "किसी जी.पी. में a = 81 और r = 1/3 हो, तो दूसरा पद क्या होगा?",
+    options: ["27", "54", "9", "3"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि Sn = 4n² + 2n हो, तो a3 क्या होगा?",
+    options: ["30", "40", "50", "60"],
+    correctAnswer: 2
+  },
+  {
+    question: "1 + 2 + 3 + ... + n का योग क्या होता है?",
+    options: ["n(n-1)/2", "n(n+1)/2", "n²", "2n"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि किसी AP का आठवाँ पद 23 है और d = 3 है, तो पहला पद क्या होगा?",
+    options: ["2", "5", "7", "4"],
+    correctAnswer: 3
+  },
+  {
+    question: "5, 10, 20, 40,... किस प्रकार की श्रेणी है?",
+    options: ["AP", "GP", "HP", "None"],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी जी.पी. के तीन पद 8, 16, 32 हैं। r का मान क्या होगा?",
+    options: ["1", "2", "3", "4"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि a = 6 और d = -1 हो, तो पाँचवाँ पद क्या होगा?",
+    options: ["1", "2", "3", "4"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि किसी श्रेणी के पहले 3 पद 2, 4, 8 हैं, तो चौथा पद क्या होगा?",
+    options: ["10", "12", "14", "16"],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि an = n(n+2), तो a2 का मान क्या होगा?",
+    options: ["4", "6", "8", "10"],
+    correctAnswer: 2
+  },
+  {
+    question: "AP में a = 3, d = 2 हो तो Sn का सूत्र क्या होगा?",
+    options: ["n(2n+1)", "n(2n-1)", "n(2n)", "n(2a + (n-1)d)/2"],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि किसी GP में r = 1 है, तो सारे पद होंगे?",
+    options: ["समान", "भिन्न", "वृद्धिमान", "घटमान"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी AP में दो पदों के बीच का अंतर d कहलाता है। यह होता है?",
+    options: ["a2 - a1", "a3 - a2", "दोनों", "कोई नहीं"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि Sn = n² + 2n, तो a2 क्या होगा?",
+    options: ["6", "5", "4", "3"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी श्रेणी में 5वाँ पद 20 और 10वाँ पद 45 है, d क्या होगा?",
+    options: ["3", "4", "5", "6"],
+    correctAnswer: 2
+  },
+  {
+    question: "2 + 4 + 6 + 8 + ... + 100 का योग क्या होगा?",
+    options: ["2550", "2500", "2600", "2750"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि an = 5n - 3, तो a4 क्या होगा?",
+    options: ["17", "15", "13", "12"],
+    correctAnswer: 1
+  },
+  {
+    question: "1, 2, 4, 7, 11, ... अनुक्रम में अगला पद क्या होगा?",
+    options: ["14", "15", "16", "17"],
+    correctAnswer: 2
+  },
+  {
+    question: "किसी AP के पहले तीन पदों का योग 24 है और d = 2 है, तो a क्या होगा?",
+    options: ["6", "8", "7", "9"],
+    correctAnswer: 0
+  },
+  {
+    question: "GP का चौथा पद a4 = ar³ होता है, तो पाँचवाँ पद क्या होगा?",
+    options: ["ar⁵", "ar⁴", "ar³", "ar²"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि किसी अनुक्रम का प्रत्येक पद पिछले दो पदों का योग हो, तो वह कहलाता है?",
+    options: ["Fibonacci", "AP", "GP", "Triangular"],
+    correctAnswer: 0
+  }
+);
+
+ 
+
+
+
+
+       
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>

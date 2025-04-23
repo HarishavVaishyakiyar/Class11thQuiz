@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>सीमा और अवकलज: (Limits and Derivatives)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>सीमा और अवकलज: (Limits and Derivatives)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+        const questions = [
+  {
+    question: "सीमा (Limit) क्या होती है?",
+    options: ["एक संख्या का मान", "समय का मान", "एक निरंतरता का मान", "एक अव्यवस्था का मान"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि lim(x→a) f(x) = L हो, तो इसका मतलब क्या है?",
+    options: ["f(a) = L", "f(a) ≠ L", "lim(x→a) f(x) ≠ L", "lim(x→a) f(x) = ∞"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f(x) = x², तो lim(x→2) f(x) का मान क्या होगा?",
+    options: ["2", "4", "0", "∞"],
+    correctAnswer: 1
+  },
+  {
+    question: "अवकलज (Derivative) किसे कहते हैं?",
+    options: ["वक्र का कोण", "वक्र का ढाल", "वक्र का मध्य", "वक्र का शिखर"],
+    correctAnswer: 1
+  },
+  {
+    question: "किस स्थिति में एक कार्य का अवकलज अस्तित्व में होता है?",
+    options: ["यदि कार्य निरंतर है", "यदि कार्य विवर्तनीय है", "यदि कार्य सन्निकट है", "यदि कार्य अव्यवस्थित है"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→3) (x² - 9)/(x - 3) का मान क्या होगा?",
+    options: ["3", "6", "9", "0"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि f(x) = x³, तो f'(x) क्या होगा?",
+    options: ["3x²", "3x³", "x²", "3x"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि lim(x→a) f(x) = 0 हो, तो f(x) को क्या कहा जाता है?",
+    options: ["समीकरण", "समानांतर", "संकुचन", "अस्थिर"],
+    correctAnswer: 2
+  },
+  {
+    question: "lim(x→∞) (1/x) का मान क्या होगा?",
+    options: ["0", "∞", "1", "अस्तित्व नहीं"],
+    correctAnswer: 0
+  },
+  {
+    question: "अवकलज के द्वारा हम किसे माप सकते हैं?",
+    options: ["कार्य की शक्ति", "वक्र का ढाल", "किसी वस्तु का भार", "समानांतर"],
+    correctAnswer: 1
+  },
+  {
+    question: "f(x) = x² + 3x - 4 के लिए f'(x) क्या होगा?",
+    options: ["2x + 3", "2x - 3", "x² + 3", "3x + 4"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि f(x) = √x, तो f'(x) क्या होगा?",
+    options: ["1/2√x", "1/√x", "√x", "2x"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→1) (x³ - 1)/(x - 1) का मान क्या होगा?",
+    options: ["1", "3", "2", "0"],
+    correctAnswer: 1
+  },
+  {
+    question: "अवकलज के लिए नियमों का समूह क्या कहलाता है?",
+    options: ["गणना नियम", "डेरिवेटिव नियम", "सामान्य नियम", "अवकलन विधि"],
+    correctAnswer: 3
+  },
+  {
+    question: "किसी निरंतरता के अवकलज में क्या होता है?",
+    options: ["कार्य की दर बदलती है", "कार्य की दर स्थिर रहती है", "कार्य निरंतर बढ़ता है", "कार्य अस्थिर होता है"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→0) sin(x)/x का मान क्या होगा?",
+    options: ["1", "0", "∞", "अस्तित्व नहीं"],
+    correctAnswer: 0
+  },
+  {
+    question: "एक वक्र का अवकलज उसके किस गुण को दर्शाता है?",
+    options: ["केंद्र", "ढाल", "व्यास", "वक्रता"],
+    correctAnswer: 1
+  },
+  {
+    question: "अगर lim(x→a) f(x) = f(a) हो, तो इसे क्या कहते हैं?",
+    options: ["सामान्य अवकलन", "निरंतरता", "समानांतरता", "विक्षेप"],
+    correctAnswer: 1
+  },
+  {
+    question: "f(x) = x² - 4x + 3 के लिए f'(x) क्या होगा?",
+    options: ["2x - 4", "2x + 3", "x² - 4", "4x - 3"],
+    correctAnswer: 0
+  },
+  {
+    question: "सीमा के परिभाषा में क्या महत्वपूर्ण बिंदु है?",
+    options: ["समीकरण", "अवकलन", "पंक्ति", "पक्ष"],
+    correctAnswer: 1
+  },
+  {
+    question: "lim(x→0) (1 - cos(x))/x² का मान क्या होगा?",
+    options: ["0", "1/2", "∞", "1"],
+    correctAnswer: 1
+  },
+  {
+    question: "f(x) = 2x³ + x² - 5 के लिए f'(x) क्या होगा?",
+    options: ["6x² + 2x", "6x² + x", "3x² + x", "2x² - 5"],
+    correctAnswer: 0
+  },
+  {
+    question: "f(x) = tan(x) के लिए f'(x) क्या होगा?",
+    options: ["sec²(x)", "sec(x)", "cosec²(x)", "cot(x)"],
+    correctAnswer: 0
+  },
+  {
+    question: "सीमा की परिभाषा में कौन सी अवधारणा महत्वपूर्ण होती है?",
+    options: ["सापेक्षता", "समीकरण", "अविकलन", "लघुकरण"],
+    correctAnswer: 2
+  },
+  {
+    question: "सीमा का सिद्धांत किसे लागू होता है?",
+    options: ["किसी वस्तु की गति", "वक्र की निरंतरता", "निरंतरता का प्रकार", "विकृति"],
+    correctAnswer: 1
+  },
+  {
+    question: "lim(x→a) (f(x) - f(a))/(x - a) का क्या अर्थ होता है?",
+    options: ["अवकलन का रूप", "सीमा का रूप", "समानांतरता", "संक्रमण"],
+    correctAnswer: 0
+  },
+  {
+    question: "f(x) = x³ - 2x + 1 के लिए f'(x) क्या होगा?",
+    options: ["3x² - 2", "3x² + 2", "x² - 2", "3x - 1"],
+    correctAnswer: 0
+  },
+  {
+    question: "सीमा में एक मुख्य पहलू क्या होता है?",
+    options: ["अवकलन", "निरंतरता", "परिणाम", "गुण"],
+    correctAnswer: 1
+  },
+  {
+    question: "lim(x→2) (x³ - 8)/(x - 2) का मान क्या होगा?",
+    options: ["4", "6", "2", "8"],
+    correctAnswer: 1
+  },
+  {
+    question: "सीमा का वास्तविक अर्थ क्या होता है?",
+    options: ["संग्रहण", "निरंतरता", "समायोजन", "अवकलन"],
+    correctAnswer: 1
+  },
+  {
+    question: "f(x) = x⁴ - 5x³ + 4x² के लिए f'(x) क्या होगा?",
+    options: ["4x³ - 15x² + 8x", "3x² - 5x + 4", "5x² - 4x + 3", "4x² + 3x"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→0) (1 - cos²(x))/x² का मान क्या होगा?",
+    options: ["1/2", "0", "∞", "2"],
+    correctAnswer: 0
+  },
+  {
+    question: "अवकलन के द्वारा हम किस बात का मूल्यांकन करते हैं?",
+    options: ["किसी कार्य की दर", "किसी कार्य की शक्ति", "किसी वस्तु का आकार", "किसी कार्य का आयाम"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→1) (x² - 1)/(x - 1) का मान क्या होगा?",
+    options: ["2", "1", "3", "4"],
+    correctAnswer: 0
+  },
+  {
+    question: "f(x) = x³ - 3x² + 2 के लिए f'(x) क्या होगा?",
+    options: ["3x² - 6x", "3x² - 2x", "3x - 6", "x² - 2x"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि lim(x→a) f(x) = L, तो इसे किस प्रकार का सीमा कहा जाता है?",
+    options: ["समान्य सीमा", "अंतराल सीमा", "समीकरण सीमा", "निरंतर सीमा"],
+    correctAnswer: 3
+  },
+  {
+    question: "lim(x→∞) (3x² + 5x)/(2x² + 7) का मान क्या होगा?",
+    options: ["3/2", "0", "∞", "1"],
+    correctAnswer: 0
+  },
+  {
+    question: "सीमा और अवकलज के सिद्धांत में क्या समानताएँ हैं?",
+    options: ["दोनों निरंतरता का अध्ययन करते हैं", "दोनों के द्वारा वक्रता मापी जाती है", "दोनों के द्वारा गति का अध्ययन होता है", "दोनों को एक ही सूत्र से परिभाषित किया जाता है"],
+    correctAnswer: 0
+  },
+  {
+    question: "अवकलज के द्वारा हमें किसकी जानकारी मिलती है?",
+    options: ["समानांतरता", "कार्य की गति", "वक्र का ढाल", "अवक्रमण"],
+    correctAnswer: 2
+  },
+  {
+    question: "lim(x→-1) (x² + 3x + 2)/(x + 1) का मान क्या होगा?",
+    options: ["2", "1", "0", "∞"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि f(x) = x⁴ - 4x³ + 6x² - 4x + 1, तो f'(x) क्या होगा?",
+    options: ["4x³ - 12x² + 12x - 4", "4x³ - 12x² + 6x - 4", "3x² - 8x + 1", "4x³ - 6x² + 12x"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→∞) (5x² + 3x)/(4x² + 2x) का मान क्या होगा?",
+    options: ["5/4", "3/4", "5", "∞"],
+    correctAnswer: 0
+  },
+  {
+    question: "सीमा के सिद्धांत में क्या अवश्य है?",
+    options: ["निरंतरता", "समीकरण", "परिवर्तन", "समानता"],
+    correctAnswer: 0
+  },
+  {
+    question: "सीमा में परिवर्तन का शून्य होना क्या दर्शाता है?",
+    options: ["निरंतरता", "वृद्धि", "समीकरण", "अवशिष्ट"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→0) (sin²(x))/x² का मान क्या होगा?",
+    options: ["1", "0", "∞", "2"],
+    correctAnswer: 0
+  },
+  {
+    question: "अगर f(x) = 2x³ + 3x² - x + 5, तो f'(x) क्या होगा?",
+    options: ["6x² + 6x - 1", "6x² + 3x - 1", "6x² + 3x + 5", "6x² + 3x + 1"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→0) (cos(x) - 1)/x का मान क्या होगा?",
+    options: ["0", "1", "∞", "1/2"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→1) (x² + x - 2)/(x - 1) का मान क्या होगा?",
+    options: ["2", "1", "3", "∞"],
+    correctAnswer: 0
+  },
+  {
+    question: "अगर f(x) = 1/x, तो f'(x) क्या होगा?",
+    options: ["-1/x²", "1/x²", "-1/x", "1/x"],
+    correctAnswer: 0
+  },
+  {
+    question: "lim(x→0) (1 - cos(x))/x का मान क्या होगा?",
+    options: ["1/2", "0", "∞", "1"],
+    correctAnswer: 0
+  },
+];
+
+ 
+
+
+
+
+        
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>

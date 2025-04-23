@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>क्रमचय और संचय: (Permutations and Combinations)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>क्रमचय और संचय: (Permutations and Combinations)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+       const questions = [
+  {
+    question: "5 वस्तुओं को 3 स्थानों पर कितने क्रमचयों में व्यवस्थित किया जा सकता है?",
+    options: ["60", "10", "15", "20"],
+    correctAnswer: 0
+  },
+  {
+    question: "nP0 का मान क्या होता है?",
+    options: ["0", "1", "n", "अपरिभाषित"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि nP2 = 56 हो, तो n का मान क्या होगा?",
+    options: ["7", "8", "6", "9"],
+    correctAnswer: 1
+  },
+  {
+    question: "5 पुस्तकों को एक शेल्फ में कितने प्रकार से सजाया जा सकता है?",
+    options: ["25", "100", "120", "60"],
+    correctAnswer: 2
+  },
+  {
+    question: "nC0 का मान क्या होता है?",
+    options: ["1", "0", "n", "अपरिभाषित"],
+    correctAnswer: 0
+  },
+  {
+    question: "10 व्यक्तियों में से 3 को चुनने के कितने संचय संभव हैं?",
+    options: ["120", "720", "30", "60"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि nC2 = 28 हो, तो n का मान क्या होगा?",
+    options: ["7", "8", "9", "10"],
+    correctAnswer: 2
+  },
+  {
+    question: "nCn का मान क्या होता है?",
+    options: ["n", "0", "1", "अपरिभाषित"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि nPr = 6n, nCr = 15 हो, तो r का मान क्या है?",
+    options: ["1", "2", "3", "4"],
+    correctAnswer: 2
+  },
+  {
+    question: "एक शब्द 'MATHS' के अक्षरों से बनाए गए सभी भिन्न क्रमों की संख्या कितनी होगी?",
+    options: ["60", "100", "120", "240"],
+    correctAnswer: 2
+  },
+
+  // 11 to 50 questions follow the same structure
+  {
+    question: "6 लोगों को एक वृत्त में कितने तरीके से बैठाया जा सकता है?",
+    options: ["720", "120", "60", "120"],
+    correctAnswer: 1
+  },
+  {
+    question: "एक वर्ग में 5 लड़कों में से एक अध्यक्ष और एक सचिव चुनने के कितने तरीके हैं?",
+    options: ["20", "10", "25", "15"],
+    correctAnswer: 0
+  },
+  {
+    question: "8 वस्तुओं में से 3 वस्तुओं को बिना क्रम के चुनने की संख्या है?",
+    options: ["56", "24", "336", "168"],
+    correctAnswer: 0
+  },
+  {
+    question: "7 वस्तुओं में से 4 को चुना और व्यवस्थित किया गया, तो कितने क्रम होंगे?",
+    options: ["840", "35", "210", "720"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि nC1 = 7, तो n का मान क्या होगा?",
+    options: ["7", "6", "8", "1"],
+    correctAnswer: 0
+  },
+  {
+    question: "nC2 = 10 है, तो n का मान क्या होगा?",
+    options: ["4", "5", "6", "7"],
+    correctAnswer: 1
+  },
+  {
+    question: "4 अक्षरों वाले शब्द 'LOVE' से कितने विभिन्न शब्द बनाए जा सकते हैं?",
+    options: ["12", "24", "6", "120"],
+    correctAnswer: 1
+  },
+  {
+    question: "0!, का मान क्या होता है?",
+    options: ["1", "0", "अपरिभाषित", "-1"],
+    correctAnswer: 0
+  },
+  {
+    question: "nCr = nCn–r का नियम किस पर आधारित है?",
+    options: ["गुणा नियम", "वियोग नियम", "बायनॉमियल प्रमेय", "समरूपता"],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि nPr = n!/(n–r)!, तो 6P2 का मान है?",
+    options: ["30", "12", "20", "36"],
+    correctAnswer: 0
+  },
+
+  // 21-50 similar questions will continue...
+];
+questions.push(
+  {
+    question: "यदि nC3 = 35 है, तो n का मान क्या होगा?",
+    options: ["5", "7", "8", "9"],
+    correctAnswer: 3
+  },
+  {
+    question: "7 संख्याओं में से कितने 3-अंकीय संख्याएँ बनाई जा सकती हैं (कोई संख्या दोहराई न जाए)?",
+    options: ["210", "343", "35", "504"],
+    correctAnswer: 0
+  },
+  {
+    question: "एक शब्द 'LEVEL' के सभी भिन्न शब्दों की संख्या क्या है?",
+    options: ["60", "120", "20", "30"],
+    correctAnswer: 3
+  },
+  {
+    question: "8 वस्तुओं में से 2 को क्रम में चुनने की संख्या है?",
+    options: ["56", "16", "64", "112"],
+    correctAnswer: 0
+  },
+  {
+    question: "किसी समूह में 6 व्यक्तियों में से एक अध्यक्ष और उपाध्यक्ष चुनने के कितने तरीके हैं?",
+    options: ["36", "30", "6", "15"],
+    correctAnswer: 1
+  },
+  {
+    question: "एक पासवर्ड जिसमें 3 अक्षर और 2 अंक हों, कितने प्रकार से बनाया जा सकता है (कोई पुनरावृत्ति नहीं)?",
+    options: ["15600", "32500", "93600", "78600"],
+    correctAnswer: 2
+  },
+  {
+    question: "10C2 का मान क्या है?",
+    options: ["90", "45", "30", "20"],
+    correctAnswer: 1
+  },
+  {
+    question: "nPn = ?",
+    options: ["n!", "0", "1", "n^2"],
+    correctAnswer: 0
+  },
+  {
+    question: "6 पुस्तकों में से 4 को एक पंक्ति में कितने प्रकार से सजाया जा सकता है?",
+    options: ["360", "720", "120", "60"],
+    correctAnswer: 0
+  },
+  {
+    question: "10 व्यक्तियों में से एक समिति चुननी है जिसमें 3 सदस्य हों। कितने तरीके संभव हैं?",
+    options: ["120", "720", "30", "60"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि nCr = nCr+1 हो, तो n का मान क्या होगा?",
+    options: ["r", "r+1", "2r+1", "2r"],
+    correctAnswer: 2
+  },
+  {
+    question: "5 रंगों को एक ध्वज में कितने तरीके से लगाया जा सकता है (हर रंग एक बार)?",
+    options: ["60", "120", "100", "240"],
+    correctAnswer: 1
+  },
+  {
+    question: "6P3 का मान है?",
+    options: ["120", "360", "60", "20"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि nC4 = nC5, तो n का मान क्या होगा?",
+    options: ["8", "9", "10", "11"],
+    correctAnswer: 2
+  },
+  {
+    question: "nC1 + nC2 + nC3 + ... + nCn का योगफल होता है?",
+    options: ["2^n", "2^n - 1", "n^2", "n!"],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि nCr = 1 हो, तो r का मान क्या हो सकता है?",
+    options: ["0", "1", "n", "n और 0 दोनों"],
+    correctAnswer: 3
+  },
+  {
+    question: "7 वस्तुओं को एक वृत्त में कितने प्रकार से सजाया जा सकता है?",
+    options: ["720", "5040", "120", "720"],
+    correctAnswer: 0
+  },
+  {
+    question: "एक वर्ग में 10 विद्यार्थियों में से 3 को एक समिति में चुनना है। कितने तरीके संभव हैं?",
+    options: ["120", "30", "45", "60"],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि nP3 = 210, तो n का मान क्या होगा?",
+    options: ["6", "7", "8", "10"],
+    correctAnswer: 2
+  },
+  {
+    question: "nC2 + nC3 का योगफल है:",
+    options: ["nC4", "nC2", "nC3 + nC4", "nC1 + nC2"],
+    correctAnswer: 2
+  },
+  {
+    question: "4 संख्याओं में से 2 को क्रम में चुनने के कितने क्रमचय होंगे?",
+    options: ["12", "6", "8", "16"],
+    correctAnswer: 0
+  },
+  {
+    question: "10C0 + 10C1 + ... + 10C10 = ?",
+    options: ["100", "512", "1024", "2048"],
+    correctAnswer: 2
+  },
+  {
+    question: "5 लोगों में से एक टीम लीडर और एक डिप्टी को अलग-अलग पदों पर चुनने के कितने तरीके हैं?",
+    options: ["20", "10", "15", "25"],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि nC2 = 66 है, तो n का मान क्या होगा?",
+    options: ["10", "11", "12", "13"],
+    correctAnswer: 1
+  },
+  {
+    question: "एक शब्द 'BANANA' के सभी भिन्न शब्दों की संख्या क्या है?",
+    options: ["60", "120", "720", "60"],
+    correctAnswer: 3
+  },
+  {
+    question: "5 अक्षरों में से 3 अक्षर चुनकर कितने भिन्न शब्द बनाए जा सकते हैं?",
+    options: ["60", "120", "30", "20"],
+    correctAnswer: 0
+  },
+  {
+    question: "nCn–1 का मान क्या होता है?",
+    options: ["n", "1", "0", "n!"],
+    correctAnswer: 0
+  },
+  {
+    question: "nC2 = (n(n – 1))/2 है, यह सूत्र कब प्रयुक्त होता है?",
+    options: ["किसी दो वस्तुओं का संचय", "किसी तीन वस्तुओं का संचय", "क्रमचय", "किसी एक वस्तु का चयन"],
+    correctAnswer: 0
+  },
+  {
+    question: "nC3 = nC(n – 3) के अनुसार, यदि nC3 = 84, तो n = ?",
+    options: ["9", "12", "11", "10"],
+    correctAnswer: 2
+  },
+  {
+    question: "किसी संख्या n के लिए nC0 + nC1 + ... + nCn का योग क्या होता है?",
+    options: ["2^n", "n!", "n^2", "n(n+1)/2"],
+    correctAnswer: 0
+  }
+);
+
+ 
+
+
+
+
+        
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>

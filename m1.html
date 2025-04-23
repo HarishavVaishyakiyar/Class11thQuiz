@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>समुच्चय: (Sets)</title>
+    <style>
+        /* Responsive Background */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+                    overflow-y: auto; /* पूरे पेज को स्क्रॉल करने की अनुमति */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Quiz Container Centered */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            max-height: 80vh; /* कंटेनर की अधिकतम ऊँचाई */
+            overflow-y: auto; /* स्क्रॉलिंग की अनुमति */
+        }
+
+        /* Result Section */
+        #result-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Question & Options */
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Correct & Incorrect Answers */
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+a {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+           border-radius: 5px;
+           cursor: pointer;
+           color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="result-container"></div>  <!-- रिजल्ट ऊपर दिखाने के लिए -->
+        <h2>समुच्चय: (Sets)</h2>
+        <div id="quiz"></div>
+        <button id="startBtn" class="btn">क्विज शुरू करें</button>
+        <button id="prevBtn" class="btn" style="display: none;">पिछला प्रश्न</button>
+        <button id="nextBtn" class="btn" style="display: none;">अगला प्रश्न</button>
+        <button id="submitBtn" class="btn" style="display: none;">उत्तर सबमिट करें</button>
+        <button id="cancelBtn" class="btn btn-cancel" disabled>क्विज रद्द करें</button>
+<a href="index.html"> 🏠 </a>
+    </div>
+
+    <script>
+        const questions = [
+  {
+    question: "समुच्चय का परिभाषा क्या है?",
+    options: [
+      "समान वस्तुओं का संग्रह",
+      "असंगठित वस्तुओं का समूह",
+      "सुनिश्चित वस्तुओं का संग्रह",
+      "कोई भी संख्या का संग्रह"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि A = {1, 2, 3} और B = {3, 4, 5}, तो A ∩ B क्या होगा?",
+    options: [
+      "{1, 2, 3, 4, 5}",
+      "{3}",
+      "{1, 2}",
+      "{4, 5}"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "रिक्त समुच्चय को किस चिन्ह से दर्शाया जाता है?",
+    options: [
+      "{}",
+      "∅",
+      "दोनों A और B",
+      "()"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि किसी समुच्चय में कोई भी तत्व नहीं हो, तो उसे क्या कहते हैं?",
+    options: [
+      "परिमेय समुच्चय",
+      "रिक्त समुच्चय",
+      "अपरिमेय समुच्चय",
+      "सार्वभौमिक समुच्चय"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि A = {a, b, c} हो, तो A का संख्या बल क्या होगा?",
+    options: [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "U = {1,2,3,4,5} और A = {2,3}, तो A' (A का पूरक) क्या होगा?",
+    options: [
+      "{1,2,3}",
+      "{4,5}",
+      "{1,4,5}",
+      "{2,3,4,5}"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि A = {1,2,3} और B = {3,4,5}, तो A ∪ B क्या है?",
+    options: [
+      "{1,2,3,4,5}",
+      "{3}",
+      "{1,2}",
+      "{4,5}"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "A ⊆ B का अर्थ क्या है?",
+    options: [
+      "A और B समान हैं",
+      "A, B का पूरक है",
+      "A, B का उपसमुच्चय है",
+      "B, A का पूरक है"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "A = {1,2}, B = {2,3}, A ∩ B = ?",
+    options: [
+      "{1,2,3}",
+      "{2}",
+      "{1}",
+      "{3}"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "A = {1,2}, B = {3,4}, A ∩ B = ?",
+    options: [
+      "{1}",
+      "{2}",
+      "{}",
+      "{1,2}"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "A = {x | x एक सम संख्या है, x ≤ 10}, तो A क्या होगा?",
+    options: [
+      "{2, 4, 6, 8, 10}",
+      "{1, 3, 5, 7, 9}",
+      "{10, 8, 6}",
+      "{0, 2, 4, 6, 8, 10}"
+    ],
+    correctAnswer: 3
+  },
+  {
+    question: "A = {1, 2, 3}, B = {3, 4}, A - B = ?",
+    options: [
+      "{1, 2, 3, 4}",
+      "{1, 2}",
+      "{3}",
+      "{}"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "किसी समुच्चय का पूरक किसके सापेक्ष होता है?",
+    options: [
+      "A",
+      "B",
+      "सार्वभौमिक समुच्चय",
+      "रिक्त समुच्चय"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "A = {}, इसे क्या कहते हैं?",
+    options: [
+      "रिक्त समुच्चय",
+      "सार्वभौमिक समुच्चय",
+      "परिमेय समुच्चय",
+      "उपसमुच्चय"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि A = {1,2,3} और B = {1,2,3}, तो A ∪ B क्या होगा?",
+    options: [
+      "{1,2,3}",
+      "{1,1,2,2,3,3}",
+      "{1,2,3,3}",
+      "{1,2}"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि कोई समुच्चय स्वयं का ही उपसमुच्चय हो तो उसे क्या कहते हैं?",
+    options: [
+      "त्रुटि",
+      "स्वयंसिद्ध",
+      "स्वसमुच्चय",
+      "सही"
+    ],
+    correctAnswer: 3
+  },
+  {
+    question: "कितने उपसमुच्चय होते हैं यदि A में 3 तत्व हैं?",
+    options: [
+      "3",
+      "6",
+      "8",
+      "9"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "A = {x | x एक स्वर है}, तो A का उदाहरण क्या होगा?",
+    options: [
+      "{a, e, i, o, u}",
+      "{b, c, d}",
+      "{1,2,3}",
+      "{A, E, I}"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि दो समुच्चय A और B समान हों तो A ∪ B = ?",
+    options: [
+      "A",
+      "B",
+      "A या B",
+      "सार्वभौमिक समुच्चय"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि A ⊆ B और B ⊆ A तो क्या निष्कर्ष है?",
+    options: [
+      "A रिक्त है",
+      "A = B",
+      "B बड़ा है",
+      "A ∩ B = {}"
+    ],
+    correctAnswer: 1
+  },
+
+  // 30 more to complete 50
+  {
+    question: "A ∪ ∅ = ?",
+    options: [
+      "∅",
+      "A",
+      "सार्वभौमिक समुच्चय",
+      "{}"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "A ∩ ∅ = ?",
+    options: [
+      "A",
+      "∅",
+      "U",
+      "{}"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "A = {1,2,3}, B = {2,3,4}, A ∩ B = ?",
+    options: [
+      "{2,3}",
+      "{1,4}",
+      "{3,4}",
+      "{1,2}"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "कुल उपसमुच्चय की संख्या n तत्वों वाले समुच्चय के लिए क्या होती है?",
+    options: [
+      "2^n",
+      "n^2",
+      "n+1",
+      "n!"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "सार्वभौमिक समुच्चय को किस चिन्ह से दर्शाते हैं?",
+    options: [
+      "∅",
+      "U",
+      "A",
+      "S"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "A = {x | x एक अक्षर है}, तो इनमें से कौन A का सदस्य नहीं है?",
+    options: [
+      "b",
+      "m",
+      "7",
+      "z"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि A = {a, b, c} हो, तो A का कोई एक उपसमुच्चय कौन है?",
+    options: [
+      "{a, b, d}",
+      "{a, b}",
+      "{d, e}",
+      "{a, b, c, d}"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "A ∪ A = ?",
+    options: [
+      "A",
+      "2A",
+      "∅",
+      "{}"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "∅ ⊆ A का क्या अर्थ है?",
+    options: [
+      "रिक्त समुच्चय, A का सदस्य है",
+      "A रिक्त है",
+      "रिक्त समुच्चय, A का उपसमुच्चय है",
+      "A रिक्त समुच्चय का पूरक है"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "A ∩ A = ?",
+    options: [
+      "∅",
+      "A",
+      "U",
+      "{}"
+    ],
+    correctAnswer: 1
+  },
+];
+questions.push(
+  {
+    question: "A = {x: x एक प्राकृत संख्या है और x < 5}, तो A क्या होगा?",
+    options: [
+      "{1, 2, 3, 4}",
+      "{0, 1, 2, 3, 4}",
+      "{2, 3, 4, 5}",
+      "{1, 2, 3, 4, 5}"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "A = {1,2}, B = {1,2,3}, तो A ⊂ B का अर्थ क्या है?",
+    options: [
+      "A और B समान हैं",
+      "A, B का समुच्चय है",
+      "A, B का उपसमुच्चय है",
+      "A, B का पूरक है"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि A = {2,4,6} और B = {1,2,3,4,5,6}, तो A ⊆ B?",
+    options: [
+      "हाँ",
+      "नहीं",
+      "पता नहीं",
+      "केवल अगर B सार्वभौमिक हो"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि A = {1,3,5} और B = {2,4,6}, तो A ∩ B = ?",
+    options: [
+      "{1,2,3,4,5,6}",
+      "{}",
+      "{1,3}",
+      "{5}"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि A और B दो समुच्चय हैं, तो A ∪ B का तत्वों की संख्या क्या होगी?",
+    options: [
+      "n(A) + n(B)",
+      "n(A) + n(B) - n(A ∩ B)",
+      "n(A ∩ B)",
+      "n(A × B)"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि A = {1, 2, 3}, तो A का पावर सेट कितना होगा?",
+    options: [
+      "4",
+      "6",
+      "8",
+      "10"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "A = {1,2,3} और B = {2,3,4}, तो A - B क्या होगा?",
+    options: [
+      "{1}",
+      "{4}",
+      "{2,3}",
+      "{}"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "एक समुच्चय और उसका पूरक मिलकर क्या बनाते हैं?",
+    options: [
+      "रिक्त समुच्चय",
+      "सार्वभौमिक समुच्चय",
+      "A",
+      "B"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि A ⊂ B और B ⊂ C, तो A ⊂ C?",
+    options: [
+      "सदैव",
+      "कभी-कभी",
+      "नहीं",
+      "यदि A = C"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "यदि A = {x | x एक अक्षर है और स्वर नहीं है}, तो A में क्या होगा?",
+    options: [
+      "{b, c, d, f, g...}",
+      "{a, e, i, o, u}",
+      "{1,2,3}",
+      "{z, y, x, w, v}"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "A ∪ (B ∩ C) बराबर होता है:",
+    options: [
+      "(A ∪ B) ∩ (A ∪ C)",
+      "(A ∩ B) ∪ (A ∩ C)",
+      "A ∩ (B ∪ C)",
+      "A ∪ B ∪ C"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "डायग्राम द्वारा समुच्चय को दर्शाने की विधि को क्या कहते हैं?",
+    options: [
+      "Bar ग्राफ",
+      "Pie चार्ट",
+      "Venn चित्र",
+      "Line ग्राफ"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि A ∩ B = ∅ हो, तो A और B को क्या कहते हैं?",
+    options: [
+      "विलोम समुच्चय",
+      "अलग समुच्चय",
+      "अविभाज्य समुच्चय",
+      "वियोज्य समुच्चय"
+    ],
+    correctAnswer: 3
+  },
+  {
+    question: "यदि n(A) = 5 और n(B) = 4 और A ∩ B = ∅, तो n(A ∪ B) = ?",
+    options: [
+      "5",
+      "4",
+      "9",
+      "1"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "यदि A और B के कोई सामान्य तत्व न हों तो A ∩ B = ?",
+    options: [
+      "{}",
+      "U",
+      "A",
+      "B"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: "समुच्चय सिद्धांत का जनक किसे कहा जाता है?",
+    options: [
+      "आर्किमिडीज़",
+      "जॉर्ज कैंटर",
+      "न्यूटन",
+      "यूक्लिड"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "यदि किसी समुच्चय में समान तत्व दोहराए जाएं तो क्या होगा?",
+    options: [
+      "तत्वों की संख्या बढ़ेगी",
+      "कोई फर्क नहीं पड़ेगा",
+      "वह अमान्य होगा",
+      "रिक्त समुच्चय बन जाएगा"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "Venn चित्रों में समुच्चयों को कैसे दर्शाया जाता है?",
+    options: [
+      "त्रिभुज",
+      "वृत्त",
+      "चतुर्भुज",
+      "रेखाएँ"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "∅ ⊂ A का क्या तात्पर्य है?",
+    options: [
+      "A, रिक्त समुच्चय है",
+      "A ⊂ ∅ है",
+      "∅, A का उपसमुच्चय है",
+      "∅, A का पूरक है"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "A ∪ ∅ = ?",
+    options: [
+      "∅",
+      "A",
+      "U",
+      "A ∩ ∅"
+    ],
+    correctAnswer: 1
+  }
+);
+     let currentQuestionIndex = 0;
+        let answers = [];
+        let quizStarted = false;
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            document.getElementById('quiz').innerHTML = `
+                <div class="question">${index + 1}. ${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<label><input type="radio" name="question${index}" value="${i}" ${answers[index] === i ? "checked" : ""}> ${option}</label>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // स्क्रॉल सबसे ऊपर ले जाने के लिए
+            document.querySelector(".quiz-container").scrollTop = 0;
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestionIndex = 0;
+            answers = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('cancelBtn').disabled = false;
+            displayQuestion(currentQuestionIndex);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('prevBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
+            if (selectedOption) {
+                answers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let attemptedQuestions = answers.length;
+            let resultHTML = "<h3>📊 **आपके उत्तर:**</h3>";
+
+            answers.forEach((answer, index) => {
+                const correctIndex = questions[index].correctAnswer;
+                const isCorrect = answer === correctIndex;
+
+                if (isCorrect) {
+                    score += 4;
+                } else {
+                    score -= 1;
+                }
+
+                // सही और गलत उत्तर दिखाना
+                resultHTML += `
+                    <div class="${isCorrect ? 'correct' : 'incorrect'}">
+                        ${index + 1}. ${questions[index].question} <br>
+                        ✅ सही उत्तर: ${questions[index].options[correctIndex]} ${isCorrect ? "✔️" : ""}
+                        ${!isCorrect ? `<br> ❌ आपका उत्तर: ${questions[index].options[answer] || "कोई उत्तर नहीं"} ` : ""}
+                        <hr>
+                    </div>
+                `;
+            });
+
+            score = Math.max(0, score); // स्कोर को 0 से नीचे नहीं जाने देंगे
+
+            document.getElementById('result-container').innerHTML = `🎯 **आपने ${attemptedQuestions * 4} में से ${score} अंक प्राप्त किए**`;
+            document.getElementById('quiz').innerHTML = resultHTML;
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('cancelBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+        document.getElementById('submitBtn').addEventListener('click', submitQuiz);
+        document.getElementById('cancelBtn').addEventListener('click', submitQuiz);
+    </script>
+</body>
+</html>
